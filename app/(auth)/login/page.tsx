@@ -154,7 +154,7 @@ export default function LoginPage() {
             AI Todo Manager
           </h1>
           <p className="text-muted-foreground">
-            AI와 함께하는 스마트한 할 일 관리
+            AI가 도와주는 스마트한 할 일 관리
           </p>
         </div>
 
