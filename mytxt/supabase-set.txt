@@ -1,0 +1,15 @@
+AI 할 일 관리 프로젝트에 Supabase 설정파일을 생성해 주세요.
+
+1. 필요한 파일은 다음과 같습니다.
+-lib/supabase/server.ts: 서버컴포넌트용 Supabase 클라이언트(createClient)
+-lib/supabase/client.ts: 클라이언트 컴포넌트용 Supabase 클라이언트(createClient)
+
+2. 이미 다음 패키지가 설치되어 있습니다.
+-@supabase/supabase-js
+-@supabase/ssr
+
+3.환경변수(.env.local)는 다음과 같이 추가했습니다.
+-NEXT_PUBLIC_SUPABASE_URL=Project_URL
+-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=api_key
+
+이외 화면이나 로직은 수정하지 말고, 필요한 초기화 코드만 직성해 주세요.

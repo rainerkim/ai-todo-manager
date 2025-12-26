@@ -1,0 +1,4 @@
+현재 프로젝트(app/layout.tsx)에 메타테그를 추가해 부세요. Next.js 15 rlwnsdml Metadata 타입구조를 따르며, 다음 내용을 포함해야 합니다. 이외에 검색엔진과 SNS에서 올바르게 표시되기 위한 최소한의 필드를 함께 추가해 주세요.
+
+-title: AI 할 일 관리 서비스
+-description: AI 가 도와주는 똑똑한 할 일 관리 서비스

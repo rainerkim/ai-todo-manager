@@ -1,0 +1,413 @@
+---
+description: AI 할일 관리 웹 서비스 개발을 위한 프로젝트 규칙 - Next.js 15, TypeScript, Supabase, AI SDK 기반
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.json"]
+alwaysApply: true
+---
+
+# AI 할일 관리 웹 서비스 개발 규칙
+
+## 1. 프로젝트 개요
+
+### 프로젝트 설명
+- **프로젝트명**: AI 할일 관리 (AI Todo Manager)
+- **목적**: AI를 활용하여 할일을 지능적으로 관리하고, 우선순위를 제안하며, 생산성을 향상시키는 웹 애플리케이션
+- **아키텍처**: Next.js 15 App Router 기반의 풀스택 웹 애플리케이션
+- **핵심 가치**: 사용자 경험 최우선, 직관적인 인터페이스, 빠른 응답 속도
+
+### 주요 기능
+- 할일 CRUD (생성, 조회, 수정, 삭제)
+- AI 기반 할일 분석 및 우선순위 제안
+- 할일 자동 분류 및 태그 제안
+- 마감일 기반 알림 및 리마인더
+- 할일 통계 및 생산성 대시보드
+- 사용자 인증 및 개인화된 데이터 관리
+
+---
+
+## 2. 기술 스택
+
+### 프론트엔드
+- **프레임워크**: Next.js 15 (App Router)
+- **언어**: TypeScript (strict 모드 필수)
+- **스타일링**: Tailwind CSS
+- **UI 컴포넌트**: Shadcn/ui
+- **상태 관리**: React Context API / Zustand (필요시)
+- **폼 관리**: React Hook Form + Zod (유효성 검사)
+
+### 백엔드
+- **API**: Next.js API Routes / Server Actions
+- **데이터베이스**: Supabase (PostgreSQL)
+- **인증**: Supabase Auth
+- **AI 연동**: AI SDK (OpenAI, Anthropic 등)
+
+### 개발 도구
+- **린터**: ESLint (Next.js + TypeScript 규칙 기반)
+- **포매터**: Prettier
+- **타입 체크**: TypeScript Compiler
+- **버전 관리**: Git
+
+---
+
+## 3. 코딩 스타일 및 컨벤션
+
+### TypeScript 규칙
+- **strict 모드 필수**: `tsconfig.json`에서 `strict: true` 설정
+- **타입 명시**: 모든 함수 매개변수와 반환값에 타입을 명시한다
+- **인터페이스 우선**: 객체 타입은 `type`보다 `interface` 사용을 우선한다
+- **any 금지**: `any` 타입 사용을 지양하고, `unknown` 또는 제네릭 사용
+
+```typescript
+// ✅ 좋은 예
+interface Todo {
+  id: string;
+  title: string;
+  completed: boolean;
+  priority?: 'high' | 'medium' | 'low';
+}
+
+const createTodo = async (title: string): Promise<Todo> => { /* 구현 */ };
+```
+
+### 컴포넌트 작성 규칙
+- **함수형 컴포넌트 필수**: 클래스 컴포넌트는 사용하지 않는다
+- **화살표 함수 사용**: 모든 함수는 화살표 함수(`=>`)로 작성한다
+- **파일명 규칙**: 
+  - 컴포넌트: `PascalCase.tsx` (예: `TodoItem.tsx`)
+  - 유틸리티: `camelCase.ts` (예: `formatDate.ts`)
+  - 훅: `use*.ts` (예: `useTodos.ts`)
+- **한 파일 하나의 컴포넌트**: 재사용 가능한 컴포넌트는 각각 별도 파일로 분리한다
+
+```typescript
+// ✅ 좋은 예: components/TodoItem.tsx
+/**
+ * 할일 항목 컴포넌트
+ * 개별 할일을 표시하고 완료/수정/삭제 기능을 제공한다
+ */
+interface TodoItemProps {
+  todo: Todo;
+  onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
+}
+
+export const TodoItem = ({ todo, onToggle, onDelete }: TodoItemProps) => (
+  <div className="flex items-center gap-2 p-4 border rounded-lg">
+    {/* 구현 */}
+  </div>
+);
+```
+
+### 주석 및 문서화
+- **한글 주석 필수**: 모든 함수와 컴포넌트 상단에 한글로 한 문장 개요 작성
+- **JSDoc 작성**: 복잡한 함수는 JSDoc 형식으로 한글로 상세 설명
+- **TODO 주석**: 미완성 또는 개선이 필요한 부분은 `// TODO:` 주석으로 표시
+
+```typescript
+/**
+ * AI를 활용하여 할일의 우선순위를 분석하고 제안한다
+ * @param todos - 분석할 할일 목록
+ * @param context - 사용자의 현재 상황 정보
+ * @returns AI가 제안한 우선순위가 포함된 할일 목록
+ */
+const analyzeTodoPriority = async (
+  todos: Todo[],
+  context: UserContext
+): Promise<Todo[]> => { /* 구현 */ };
+```
+
+### 네이밍 컨벤션
+- **변수/함수**: `camelCase` (예: `userName`, `getTodoList`)
+- **컴포넌트**: `PascalCase` (예: `TodoList`, `AIPriorityPanel`)
+- **상수**: `UPPER_SNAKE_CASE` (예: `MAX_TODO_LENGTH`, `API_ENDPOINT`)
+- **타입/인터페이스**: `PascalCase` (예: `TodoItem`, `UserPreferences`)
+- **Boolean 변수**: `is`, `has`, `should` 등의 접두사 사용 (예: `isLoading`, `hasError`)
+
+---
+
+## 4. 폴더 구조
+
+```
+ai-todo-manager/
+├── app/                          # Next.js App Router
+│   ├── (auth)/                   # 인증 관련 라우트 그룹
+│   │   ├── login/
+│   │   └── signup/
+│   ├── (dashboard)/              # 대시보드 라우트 그룹
+│   │   ├── todos/
+│   │   ├── analytics/
+│   │   └── settings/
+│   ├── api/                      # API 라우트
+│   │   ├── todos/
+│   │   └── ai/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── globals.css
+├── components/                   # 재사용 가능한 컴포넌트
+│   ├── ui/                       # Shadcn/ui 컴포넌트
+│   ├── todos/                    # 할일 관련 컴포넌트
+│   ├── ai/                       # AI 기능 컴포넌트
+│   └── layout/                   # 레이아웃 컴포넌트
+├── lib/                          # 유틸리티 및 헬퍼
+│   ├── supabase/                 # Supabase 클라이언트 및 설정
+│   ├── ai/                       # AI SDK 관련 함수
+│   ├── utils/                    # 일반 유틸리티 함수
+│   └── hooks/                    # 커스텀 훅
+├── types/                        # TypeScript 타입 정의
+│   ├── todo.ts
+│   ├── user.ts
+│   └── ai.ts
+├── public/                       # 정적 파일
+├── .cursor/                      # Cursor 설정
+│   └── rules/
+│       └── project-rules.mdc
+├── .env.local                    # 환경 변수
+├── next.config.js
+├── tailwind.config.ts
+├── tsconfig.json
+└── package.json
+```
+
+---
+
+## 5. 사용자 경험 (UX) 원칙
+
+### 핵심 원칙
+- **로딩 상태**: Suspense와 스켈레톤 UI 사용
+- **빈 상태**: 친절한 안내 메시지와 액션 버튼 제공
+- **오류 상태**: Error Boundary와 한글 오류 메시지
+- **낙관적 업데이트**: UI를 먼저 업데이트하고 서버 동기화
+
+### 오류 처리 예시
+```typescript
+const fetchTodos = async (): Promise<Todo[]> => {
+  try {
+    const { data, error } = await supabase.from('todos').select('*');
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error('할일 조회 실패:', error);
+    }
+    throw new Error('할일을 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.');
+  }
+};
+```
+
+---
+
+## 6. AI 기능 구현 가이드
+
+### AI 프롬프트 작성
+- **명확한 지시**: AI에게 명확하고 구체적인 지시사항 제공
+- **컨텍스트 포함**: 사용자의 할일 목록, 기한, 중요도 등 충분한 컨텍스트 제공
+- **한글 응답 요청**: 프롬프트에 한글로 응답하도록 명시
+
+```typescript
+const generatePriorityPrompt = (todos: Todo[]): string => `
+다음 할일 목록을 분석하여 우선순위를 제안해주세요.
+
+할일 목록:
+${todos.map((todo, i) => `${i + 1}. ${todo.title} (마감: ${todo.dueDate || '없음'})`).join('\n')}
+
+각 할일에 대해 우선순위(높음/중간/낮음)와 간단한 이유를 한글로 설명해주세요.
+`;
+```
+
+### AI 응답 처리
+- **스트리밍 UI**: AI 응답이 생성되는 동안 실시간으로 표시
+- **타임아웃 설정**: AI 요청에 적절한 타임아웃 설정 (30초 권장)
+- **재시도 로직**: 실패 시 자동 재시도 (최대 3회)
+- **캐싱**: 동일한 요청은 캐싱하여 AI API 호출 최소화
+
+---
+
+## 7. 데이터베이스 설계 (Supabase)
+
+### todos 테이블
+```sql
+CREATE TABLE todos (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT,
+  completed BOOLEAN DEFAULT false,
+  priority TEXT CHECK (priority IN ('high', 'medium', 'low')),
+  due_date TIMESTAMP WITH TIME ZONE,
+  tags TEXT[],
+  ai_analysis JSONB,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 인덱스
+CREATE INDEX idx_todos_user_id ON todos(user_id);
+CREATE INDEX idx_todos_due_date ON todos(due_date);
+CREATE INDEX idx_todos_completed ON todos(completed);
+```
+
+### Row Level Security (RLS) - 필수
+```sql
+ALTER TABLE todos ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "사용자는 자신의 할일만 조회 가능"
+  ON todos FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "사용자는 자신의 할일만 생성 가능"
+  ON todos FOR INSERT WITH CHECK (auth.uid() = user_id);
+```
+
+---
+
+## 8. 보안 및 인증
+
+### 환경 변수 관리
+- **민감 정보 보호**: API 키, DB 연결 정보는 `.env.local`에 저장
+- **Git 제외**: `.env.local`은 `.gitignore`에 포함 필수
+- **예시 파일**: `.env.example`로 필요한 환경 변수 명시
+
+```env
+# .env.example
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+OPENAI_API_KEY=
+NEXT_PUBLIC_APP_URL=
+```
+
+### 인증 처리
+- **Server Components**: `createServerComponentClient` 사용
+- **Client Components**: `createClientComponentClient` 사용
+- **미들웨어**: Next.js 미들웨어로 인증 상태 확인
+
+### 데이터 검증 (Zod)
+```typescript
+import { z } from 'zod';
+
+export const todoSchema = z.object({
+  title: z.string().min(1, '제목을 입력해주세요.').max(200),
+  description: z.string().max(1000).optional(),
+  priority: z.enum(['high', 'medium', 'low']).optional(),
+  dueDate: z.string().datetime().optional(),
+});
+
+export type TodoInput = z.infer<typeof todoSchema>;
+```
+
+---
+
+## 9. 성능 최적화
+
+### 이미지 최적화
+- `next/image` 컴포넌트 사용 필수
+- WebP 형식 우선 사용
+- `loading="lazy"` 속성 활용
+
+### 코드 분할
+```typescript
+import dynamic from 'next/dynamic';
+
+const AIPriorityPanel = dynamic(
+  () => import('@/components/ai/AIPriorityPanel'),
+  {
+    loading: () => <Skeleton className="h-64 w-full" />,
+    ssr: false, // 필요시 SSR 비활성화
+  }
+);
+```
+
+### 캐싱 전략
+- **React Cache**: 서버 컴포넌트에서 `cache` 함수 활용
+- **Next.js Revalidation**: `revalidate` 옵션으로 정적 페이지 갱신
+- **SWR/React Query**: 클라이언트 데이터 페칭 및 캐싱
+
+---
+
+## 10. Git 워크플로우
+
+### 브랜치 전략
+- **main**: 프로덕션 브랜치 (배포 가능한 안정 버전)
+- **develop**: 개발 브랜치 (다음 릴리스 준비)
+- **feature/\***: 기능 개발 브랜치 (예: `feature/ai-priority`)
+- **fix/\***: 버그 수정 브랜치 (예: `fix/todo-delete-error`)
+
+### 커밋 메시지 (컨벤셔널 커밋)
+```
+feat: AI 우선순위 제안 기능 추가
+fix: 할일 삭제 시 오류 수정
+docs: README에 설치 방법 추가
+style: Tailwind CSS 클래스 정렬
+refactor: 할일 목록 컴포넌트 리팩토링
+test: 할일 생성 테스트 추가
+chore: ESLint 설정 업데이트
+```
+
+### Pull Request 규칙
+- 모든 PR은 최소 1명의 리뷰 필요
+- CI에서 모든 테스트가 통과해야 머지 가능
+- main 브랜치와 충돌 시 먼저 해결 후 머지
+
+---
+
+## 11. 코드 품질 관리
+
+### ESLint 규칙
+- `eslint-config-next` 사용 (Next.js 기본 규칙)
+- `@typescript-eslint` 플러그인 활용
+- 가능한 경우 `--fix` 옵션으로 자동 수정
+
+### 코드 리뷰 체크리스트
+- [ ] TypeScript 타입이 모두 명시되어 있는가?
+- [ ] 한글 주석이 작성되어 있는가?
+- [ ] 오류 처리가 적절히 구현되어 있는가?
+- [ ] 로딩/빈 상태 UI가 제공되는가?
+- [ ] 접근성 요구사항을 만족하는가?
+- [ ] 성능 최적화가 고려되었는가?
+
+---
+
+## 12. 배포 환경
+
+### Vercel 배포 전략
+- **개발**: Vercel Preview (PR별 자동 배포)
+- **스테이징**: Vercel Staging (develop 브랜치)
+- **프로덕션**: Vercel Production (main 브랜치)
+
+### 모니터링
+- Sentry 또는 Vercel Analytics로 오류 추적
+- Web Vitals 성능 측정
+- 사용자 행동 패턴 분석
+
+---
+
+## 13. Best Practices
+
+### DO ✅
+- 사용자 경험을 최우선으로 고려한다
+- 모든 코드에 TypeScript 타입을 명시한다
+- 한글 주석으로 코드의 의도를 명확히 한다
+- 오류를 철저히 처리하고 사용자에게 친절한 메시지를 제공한다
+- 로딩/빈 상태/오류 상태를 모두 처리한다
+- 접근성을 고려한 UI를 구현한다
+
+### DON'T ❌
+- 타입을 `any`로 지정하지 않는다
+- 주석 없이 복잡한 로직을 작성하지 않는다
+- 사용자에게 기술적인 오류 메시지를 직접 노출하지 않는다
+- 환경 변수를 코드에 하드코딩하지 않는다
+- `.env.local` 파일을 Git에 커밋하지 않는다
+- 리뷰 없이 main 브랜치에 직접 푸시하지 않는다
+
+---
+
+## 14. 참고 자료
+
+### 공식 문서
+- [Next.js 15](https://nextjs.org/docs)
+- [TypeScript](https://www.typescriptlang.org/docs/)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Shadcn/ui](https://ui.shadcn.com/)
+- [Supabase](https://supabase.com/docs)
+- [AI SDK](https://sdk.vercel.ai/docs)
+
+---
+
+**버전**: 1.0.1 | **마지막 업데이트**: 2025년 12월 24일

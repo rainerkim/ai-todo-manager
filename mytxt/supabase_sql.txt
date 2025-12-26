@@ -1,0 +1,5 @@
+@PRD.md 이문서의 데이터 구조를 기준으로 supabase용 바로 실행 가능한 SQL 쿼리를 생성해 주세요.
+필수요소
+-public.users: auth.users(id)와 1:1fh dusrufehlsms tkdydwk vmfhvlf xpdlqmf
+-public.todos: 각 사용자(user_id)별 할일 관리 테이블
+-두테블 모두 RLS 활성화 및 정책(소유자만 일기/쓰기) 추가해-결과는 schema.sql 파일로 저장

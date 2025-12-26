@@ -1,0 +1,5 @@
+supabase_pw : qQpE39CmtoNTw9jU
+
+project URL : https://qwjjctukfdrrbbazmhaz.supabase.co
+
+api_key : sb_publishable_voupwOSwbZsxtRKBzXP_TQ_on3tqcvb
